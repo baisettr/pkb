@@ -1,0 +1,23 @@
+{
+  "name": "pkb",
+  "version": "1.0.0",
+  "description": "Parking Space - Plan before you arrive",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baisettr/pkb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/baisettr/pkb/issues"
+  },
+  "homepage": "https://github.com/baisettr/pkb#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
