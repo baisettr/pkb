@@ -31,9 +31,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/graphql', expressGraphQL({
-    schema,
-    graphiql: true
+app.use('/graphql', expressGraphQL((req) => {
+    return {
+        schema,
+        graphiql: true,
+        context: req
+    }
 }));
 
 module.exports = app;
