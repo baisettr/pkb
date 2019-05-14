@@ -5,7 +5,19 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     email: { type: String },
     password: { type: String },
-    name: { type: String }
+    name: { type: String },
+    parkings: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'parking'
+        }
+    ],
+    bookings: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'booking'
+        }
+    ]
 });
 
 UserSchema.pre('save', function save(next) {
