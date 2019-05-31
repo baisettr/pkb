@@ -7,10 +7,9 @@ const passport = require('passport');
 const passportConfig = require('./services/auth');
 const MongoStore = require('connect-mongo')(session);
 const schema = require('./schema/schema');
+const { MONGO_URI } = require('./config/keys');
 
 const app = express();
-
-const MONGO_URI = 'mongodb://graphql:graphql2019@ds251518.mlab.com:51518/graphql';
 
 mongoose.Promise = global.Promise;
 mongoose.connect(MONGO_URI);
