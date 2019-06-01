@@ -6,7 +6,6 @@ import { ApolloProvider } from 'react-apollo';
 
 import '../styles/App.css';
 
-import Header from './Header';
 import Login from './Login';
 import Signup from './Signup';
 import Home from './Home';
