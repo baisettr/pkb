@@ -13,6 +13,14 @@ import Home from './Home';
 import Dashboard from './Dashboard';
 import requireAuth from './requireAuth';
 
+import Mat from './mat';
+import AppBar from './AppBar';
+import AddParking from './AddParking';
+import SearchParkings from './SearchParkings';
+import ViewParking from './ViewParking';
+import BookParking from './BookParking';
+
+
 /* const client = new ApolloClient({
   dataIdFromObject: o => o.id,
   link: new HttpLink({
@@ -31,12 +39,18 @@ class App extends Component {
   render() {
     return (
       <ApolloProvider client={client}>
-        <Header />
+        <AppBar />
         <Switch>
           <Route path="/" exact component={Dashboard} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <Route path="/dashboard" component={requireAuth(Home)} />
+
+          <Route path="/add" component={requireAuth(AddParking)} />
+          <Route path="/search" component={requireAuth(SearchParkings)} />
+          <Route path="/view" component={requireAuth(ViewParking)} />
+          <Route path="/book" component={requireAuth(BookParking)} />
+          <Route path="/mat" component={Mat} />
         </Switch >
       </ApolloProvider>
     )
