@@ -1,0 +1,114 @@
+mutation AddParking($slotNo: String, $street: String, $city: String, $state: String, $zip: Int, $slots: [SlotInput]) {
+  addParking(slotNo: $slotNo, street: $street, city: $city, state: $state, zip: $zip, slots: $slots) {
+    id
+  }
+}
+
+mutation AddBooking($bookingDate: date, $parkingId: String) {
+  addBooking(bookingDate: $bookingDate, parkingId: $parkingId) {
+    id
+    parkingId {
+      street
+    }
+    userId {
+      name
+    }
+  }
+}
+
+query UserDetails {
+  user {
+    name
+    parkings {
+      street
+      state
+      city
+      slots {
+        status
+        slotDate
+      }
+    }
+    bookings {
+      bookingDate
+      parkingId {
+        street
+      }
+    }
+  }
+}
+
+query UserParkings {
+  userParkings {
+    id
+    street
+    slotNo
+    slots {
+      slotDate
+      price
+      status
+    }
+  }
+}
+
+query UserBookings {
+  userBookings {
+    id
+    bookingDate
+    parkingId {
+      id
+      street
+      userId{
+        name
+      }
+    }
+    bookingStatus
+  }
+}
+
+query AllParkings {
+  allParkings {
+    id
+    street
+    slots {
+      slotDate
+      price
+      status
+    }
+    userId {
+      name
+    }
+  }
+}
+
+query LocationParkings ($city:String!, $state:String!) {
+  locationParkings(city: $city, state: $state) {
+    id
+    street
+    slotNo
+    slots {
+      slotDate
+      price
+      status
+    }
+    userId {
+      name
+    }
+  }
+}
+
+{
+  "slotNo":"4", 
+  "street": "861 SW Adams Ave",
+  "city": "Corvallis",
+  "state": "OR",
+  "zip": 97333,
+  "slots": [
+    {
+      "slotDate": "06-05-2019",
+      "status": true,
+      "price": 34.2
+    }
+  ],
+  "parkingId": "5cf554437bb4824a50c704c6",
+  "bookingDate": "06-04-2019"
+}
