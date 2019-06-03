@@ -27,7 +27,7 @@ const BookingType = new GraphQLObjectType({
                 //console.log(parentValue);
                 return Booking.findById(parentValue._id).populate('userId')
                     .then(booking => {
-                        console.log(booking);
+                        //console.log(booking);
                         return booking.userId
                     });
             }

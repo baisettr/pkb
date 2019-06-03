@@ -8,6 +8,7 @@ const ParkingType = new GraphQLObjectType({
     name: 'ParkingType',
     fields: () => ({
         id: { type: GraphQLID },
+        slotNo: { type: GraphQLString },
         street: { type: GraphQLString },
         city: { type: GraphQLString },
         state: { type: GraphQLString },
