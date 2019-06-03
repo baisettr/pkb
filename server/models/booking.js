@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const BookingSchema = new Schema({
-    id: { type: String },
     bookingDate: { type: Date },
     parkingId: {
         type: Schema.Types.ObjectId,

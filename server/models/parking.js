@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ParkingSchema = new Schema({
+    slotNo: { type: String },
     street: { type: String },
     city: { type: String },
     state: { type: String },
