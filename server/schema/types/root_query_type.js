@@ -52,8 +52,9 @@ const RootQueryType = new GraphQLObjectType({
                 city: { type: new GraphQLNonNull(GraphQLString) },
                 state: { type: new GraphQLNonNull(GraphQLString) },
             },
-            resolve(rootValue, { city, state }) {
-                return Parking.find({ city, state });
+            async resolve(rootValue, { city, state }) {
+                const parkings = await Parking.find({ city, state, slots: { $elemMatch: { status: true } } });
+                return parkings;
             }
         },
         allParkings: {
