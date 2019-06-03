@@ -1,5 +1,5 @@
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLFloat, GraphQLList, GraphQLInputObjectType } = graphql;
+const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLBoolean, GraphQLFloat, GraphQLList, GraphQLInputObjectType } = graphql;
 const mongoose = require('mongoose');
 
 const Parking = mongoose.model('parking');
@@ -66,10 +66,18 @@ const mutation = new GraphQLObjectType({
             },
             async resolve(parentValue, { bookingDate, parkingId }, req) {
                 const userId = req.user._id;
-                const booking = await (new Booking({ bookingDate, parkingId, userId })).save()
+                const bookingStatus = "Booked";
+                const booking = await (new Booking({ bookingDate, parkingId, userId, bookingStatus })).save()
                 const userUpdateBooking = await User.updateOne(
                     { _id: userId },
                     { $push: { bookings: booking._id } }
+                );
+                /* const updateParking = await Parking.findById(
+                    parkingId, { slots: { $elemMatch: { status: true } } }
+                ); */
+                const updateParking = await Parking.updateOne(
+                    { _id: parkingId, "slots.slotDate": bookingDate },
+                    { $set: { "slots.$.status": false } }
                 );
                 return booking
             }
@@ -77,16 +85,18 @@ const mutation = new GraphQLObjectType({
         addParking: {
             type: ParkingType,
             args: {
+                slotNo: { type: GraphQLString },
                 street: { type: GraphQLString },
                 city: { type: GraphQLString },
                 state: { type: GraphQLString },
+                zip: { type: GraphQLInt },
                 slots: {
                     type: new GraphQLList(SlotInput)
                 }
             },
-            async resolve(parentValue, { street, city, state, slots }, req) {
+            async resolve(parentValue, { slotNo, street, city, state, zip, slots }, req) {
                 const userId = req.user._id;
-                const parking = await (new Parking({ street, city, state, slots, userId })).save()
+                const parking = await (new Parking({ slotNo, street, city, state, zip, slots, userId })).save()
                 const userUpdateParking = await User.updateOne(
                     { _id: userId },
                     { $push: { parkings: parking._id } }
