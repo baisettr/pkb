@@ -7,6 +7,7 @@ import { ApolloProvider } from 'react-apollo';
 import '../styles/App.css';
 
 import Login from './Login';
+import Signin from './signinside';
 import Signup from './Signup';
 import Home from './Home';
 import Dashboard from './Dashboard';
@@ -18,6 +19,7 @@ import AddParking from './AddParking';
 import SearchParkings from './SearchParkings';
 import ViewParking from './ViewParking';
 import BookParking from './BookParking';
+import ViewBookings from './ViewBookings';
 
 
 /* const client = new ApolloClient({
@@ -48,7 +50,8 @@ class App extends Component {
           <Route path="/add" component={requireAuth(AddParking)} />
           <Route path="/search" component={requireAuth(SearchParkings)} />
           <Route path="/view" component={requireAuth(ViewParking)} />
-          <Route path="/book" component={requireAuth(BookParking)} />
+          <Route path="/bookings" component={requireAuth(ViewBookings)} />
+          <Route path="/book/:id/:bookDate/:bookPrice/:bookAddr" component={requireAuth(BookParking)} />
           <Route path="/mat" component={Mat} />
         </Switch >
       </ApolloProvider>
