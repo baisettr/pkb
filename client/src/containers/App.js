@@ -51,7 +51,7 @@ class App extends Component {
           <Route path="/search" component={requireAuth(SearchParkings)} />
           <Route path="/view" component={requireAuth(ViewParking)} />
           <Route path="/bookings" component={requireAuth(ViewBookings)} />
-          <Route path="/book/:id/:bookDate/:bookPrice/:bookAddr" component={requireAuth(BookParking)} />
+          <Route path="/book/:bookId/:bookDate/:bookPrice/:bookAddr" component={requireAuth(BookParking)} />
           <Route path="/mat" component={Mat} />
         </Switch >
       </ApolloProvider>
