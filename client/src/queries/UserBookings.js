@@ -10,7 +10,7 @@ export default gql`
       id
       street
       userId{
-        name
+        firstName
       }
     }
     bookingStatus

@@ -13,7 +13,7 @@ query LocationParkings ($city:String!, $state:String!) {
       status
     }
     userId {
-      name
+      firstName
     }
   }
 }

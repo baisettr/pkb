@@ -11,7 +11,7 @@ class ViewBookings extends Component {
     renderBookings() {
         return this.props.data.userBookings.map(({ id, bookingDate, parkingId, bookingStatus }) => {
             const { street, userId } = parkingId;
-            const parkingOwner = userId['name'];
+            const parkingOwner = userId['firstName'];
             return (
                 <li key={id} >
                     <h4>{street}</h4>
