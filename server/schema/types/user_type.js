@@ -12,7 +12,8 @@ const UserType = new GraphQLObjectType({
     fields: {
         id: { type: GraphQLID },
         email: { type: GraphQLString },
-        name: { type: GraphQLString },
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
         parkings: {
             type: new GraphQLList(ParkingType),
             resolve(parentValue) {
