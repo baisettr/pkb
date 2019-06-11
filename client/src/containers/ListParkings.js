@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import query from '../queries/LocationParkings';
 import { graphql } from 'react-apollo';
-import { Button, Link, ListSubheader } from '@material-ui/core';
+import { Button, ListSubheader } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 
 import GridList from '@material-ui/core/GridList';
