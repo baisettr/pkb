@@ -15,7 +15,11 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { Link, Button } from '@material-ui/core';
+import { Button, Tabs, Tab } from '@material-ui/core';
+import { graphql, withApollo } from 'react-apollo';
+import { Link } from 'react-router-dom';
+import query from '../queries/User';
+import mutation from '../mutations/logout';
 
 const useStyles = makeStyles(theme => ({
     grow: {
@@ -26,6 +30,8 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         display: 'none',
+        color: 'black',
+        paddingRight: '20px',
         [theme.breakpoints.up('sm')]: {
             display: 'block',
         },
@@ -78,12 +84,23 @@ const useStyles = makeStyles(theme => ({
         },
     },
     link: {
-        color: 'wheat',
-        paddingLeft: '20px'
+        color: 'black',
+        textDecoration: 'none'
+    },
+    navItem: {
+        display: 'none',
+        [theme.breakpoints.up('sm')]: {
+            display: 'block',
+        },
     }
 }));
 
-function PrimarySearchAppBar() {
+function PrimarySearchAppBar(props) {
+    //console.log(props);
+    //let user = undefined;
+
+    //props ? user = props.data.user : user = undefined;
+    const { loading, user } = props.data;
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -107,109 +124,150 @@ function PrimarySearchAppBar() {
     function handleMobileMenuOpen(event) {
         setMobileMoreAnchorEl(event.currentTarget);
     }
-
+    const onLogoutClick = () => {
+        setAnchorEl(null);
+        handleMobileMenuClose();
+        props.mutate({
+            refetchQueries: [{ query }]
+        }).then(() => {
+            props.client.cache.reset();
+        });
+    }
     const renderMenu = (
-        <Menu
+        <Menu key={1}
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/view" className={classes.link}>
+                    View Parkings
+                        </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/bookings" className={classes.link}>
+                    View Bookings
+                        </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/dashboard" className={classes.link}>
+                    My Account
+                        </Link>
+            </MenuItem>
+            <MenuItem onClick={onLogoutClick}>Logout</MenuItem>
         </Menu>
     );
-
     const renderMobileMenu = (
-        <Menu
+        <Menu key={2}
+            color="black"
             anchorEl={mobileMoreAnchorEl}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
-                <IconButton color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/view" className={classes.link}>
+                    View Parkings
+                        </Link>
             </MenuItem>
-            <MenuItem>
-                <IconButton color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/bookings" className={classes.link}>
+                    View Bookings
+                        </Link>
             </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton color="inherit">
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
+            <MenuItem onClick={handleMenuClose}>
+                <Link to="/dashboard" className={classes.link}>
+                    My Account
+                        </Link>
             </MenuItem>
+            <MenuItem onClick={onLogoutClick}>Logout</MenuItem>
         </Menu>
     );
 
     return (
         <div className={classes.grow}>
-            <AppBar position="static">
+            <AppBar position="static" style={{ backgroundColor: "white" }}>
                 <Toolbar>
                     <IconButton
                         edge="start"
                         className={classes.menuButton}
-                        color="inherit"
+                        /* color="inherit" */
                         aria-label="Open drawer"
                     >
                         <MenuIcon />
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Parking Space
-          </Typography>
-                    <div style={{ paddingLeft: "100px" }}>
-                        <Link className={classes.link} href="/add">Add Parking</Link>
-                        <Link className={classes.link} href="/search">Search Parkings</Link>
-                        <Link className={classes.link} href="/view">View Parkings</Link>
-                        <Link className={classes.link} href="/bookings">View Bookings</Link>
-                        <Link className={classes.link} href="/login">Login</Link>
-                        <Link className={classes.link} href="/signup">Signup</Link>
-                    </div>
+                        <Link to="/" className={classes.link}>
+                            Parking Space
+                        </Link>
+                    </Typography>
+                    {/* <MenuItem className={classes.menuButton}>
+                        <Link to="/add" className={classes.link}>
+                            Add Parking
+                        </Link>
+                    </MenuItem>
+
+                    <MenuItem >
+                        <Link to="/view" className={classes.link}>
+                            View Parkings
+                        </Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/bookings" className={classes.link}>
+                            View Bookings
+                        </Link>
+                    </MenuItem> */}
+
                     <div className={classes.grow} />
-                    <div className={classes.sectionDesktop}>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={0} color="secondary">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={0} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            edge="end"
-                            aria-owns={isMenuOpen ? 'material-appbar' : undefined}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </div>
+                    <MenuItem>
+                        <Link to="/search" className={classes.link}>
+                            Search Parkings
+                        </Link>
+                    </MenuItem>
+                    {user ?
+                        <div className={classes.sectionDesktop}>
+                            {/* <IconButton color="inherit">
+                                <Badge badgeContent={0} color="secondary">
+                                    <MailIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton color="inherit">
+                                <Badge badgeContent={0} color="secondary">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton> */}
+                            <IconButton
+                                edge="end"
+                                aria-owns={isMenuOpen ? 'material-appbar' : undefined}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </div>
+                        :
+                        <MenuItem >
+                            <Link to="/login" className={classes.link}>
+                                Login
+                            </Link>
+                        </MenuItem>}
                     <div className={classes.sectionMobile}>
-                        <IconButton aria-haspopup="true" onClick={handleMobileMenuOpen} color="inherit">
+                        <IconButton aria-haspopup="true" onClick={handleMobileMenuOpen} >
                             <MoreIcon />
                         </IconButton>
                     </div>
                 </Toolbar>
             </AppBar>
-            {renderMenu}
-            {renderMobileMenu}
+            {user ? [renderMenu, renderMobileMenu] : ""}
         </div>
     );
 }
 
-export default PrimarySearchAppBar;
+export default graphql(mutation)(
+    graphql(query)(withApollo(PrimarySearchAppBar))
+);
