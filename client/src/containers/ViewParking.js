@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import query from '../queries/UserParkings';
 import { graphql } from 'react-apollo';
-import { Button, Link } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { Button } from '@material-ui/core';
 
 
 class ViewParking extends Component {
@@ -9,7 +10,8 @@ class ViewParking extends Component {
         super(props);
     }
     renderParkings() {
-        return this.props.data.userParkings.map(({ id, street, slotNo, slots }) => {
+        let userParkings = this.props.data.userParkings || [];
+        return userParkings.map(({ id, street, slotNo, slots }) => {
             const [slot] = slots;
             return (
                 <li key={id} >
@@ -24,6 +26,10 @@ class ViewParking extends Component {
 
         return (
             <div style={{ margin: "100px", alignContent: "center" }}>
+                <Button type="submit" variant="outlined" style={{ margin: '10px', color: "white", backgroundColor: "black" }}>
+
+                    <Link to="/add" style={{ color: "white", textDecoration: 'none' }}>Add Parking</Link>
+                </Button>
                 <h4>List of User Parkings</h4>
                 <ul >
                     {this.renderParkings()}
