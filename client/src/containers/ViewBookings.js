@@ -9,7 +9,8 @@ class ViewBookings extends Component {
         super(props);
     }
     renderBookings() {
-        return this.props.data.userBookings.map(({ id, bookingDate, parkingId, bookingStatus }) => {
+        let userBookings = this.props.data.userBookings || [];
+        return userBookings.map(({ id, bookingDate, parkingId, bookingStatus }) => {
             const { street, userId } = parkingId;
             const parkingOwner = userId['firstName'];
             return (
@@ -26,7 +27,7 @@ class ViewBookings extends Component {
 
         return (
             <div style={{ margin: "100px", alignContent: "center" }}>
-                <h4>List of User User Bookings</h4>
+                <h4>List of User Bookings</h4>
                 <ul >
                     {this.renderBookings()}
                 </ul>
