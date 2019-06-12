@@ -3,13 +3,16 @@ import { Button, Switch, Grid, Typography, TextField, InputAdornment, FormHelper
 import mutation from '../mutations/AddParking';
 import { withRouter } from 'react-router-dom';
 import { graphql } from 'react-apollo';
+import query from '../queries/UserParkings';
+
+import Select from '../components/Select';
 
 class AddParking extends Component {
     constructor(props) {
         super(props);
-        this.state = { error: "", homeAddr: "", slotNo: "", price: 0, parkingDate: undefined };
+        this.state = { error: "", homeAddr: "", slotNo: "", location: undefined, price: 0, parkingDate: undefined, suggestedPlaces: ['New York, USA', 'San Francisco, USA', 'Florida, USA', 'Portland, USA'] };
     }
-    handleAddParking = (e) => {
+    handleAddParking = async (e) => {
         e.preventDefault();
         const slotDate = this.state.parkingDate;
         const status = true;
@@ -21,35 +24,70 @@ class AddParking extends Component {
         const zip = 97330;
         const slot = { slotDate, status, price };
         const slots = [slot]
-
-
-        this.props.mutate({
-            variables: { slotNo, street, city, state, zip, slots }
-        }).then((res) => {
-            this.props.history.push('/view');
-        }).catch((res) => {
-            const errors = res.graphQLErrors.map(e => e.message);
-            const error = JSON.stringify(errors);
-            this.setState({ error });
-        })
+        const location = this.state.location;
+        if (!this.state.error) {
+            this.props.mutate({
+                variables: { slotNo, street, city, state, zip, slots, location },
+                refetchQueries: [{ query }]
+            }).then((res) => {
+                this.props.history.push('/view');
+            }).catch((res) => {
+                const errors = res.graphQLErrors.map(e => e.message);
+                const error = JSON.stringify(errors);
+                this.setState({ error });
+            })
+        }
 
     }
+
+    async fetchGeometry(place_id) {
+        return new Promise((resolve, reject) => {
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + place_id + '&fields=name,geometry&key=' + 'AIzaSyDiFYXE3HoT8ux5MqVFaeYLDLQcZvhAqqs';
+            fetch(proxyUrl + url)
+                .then(response => response.json())
+                .then(data => {
+                    resolve(data.result.geometry.location)
+                });
+        })
+    }
+
+    handleHomeAddrChange = async (geometry) => {
+        //console.log(geometry);
+        if (geometry.place_id) {
+            const { place_id, homeAddr } = geometry;
+            const { lat, lng } = await this.fetchGeometry(place_id);
+
+            const location = {
+                type: "Point",
+                coordinates: [lng, lat]
+            }
+            //console.log(location, homeAddr);
+            this.setState({ location, homeAddr, error: "" })
+        } else {
+            this.setState({ error: 'Invalid Address' })
+        }
+
+    }
+
     render() {
         return (
             <div style={{ margin: "100px", alignContent: "center" }}>
                 <h4 style={{ textAlign: "center" }}>Add a Parking Slot</h4>
-                <p style={{color:'red'}}>{this.state.error}</p>
+                <p style={{ color: 'red', textAlign: "center" }}>{this.state.error}</p>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <form onSubmit={this.handleAddParking.bind(this)}>
 
-                        <TextField
+                        {/* <TextField
                             required
                             style={{ margin: '10px', width: '100%' }}
                             id="home-address"
                             value={this.state.homeAddr}
                             onChange={(e) => { this.setState({ homeAddr: e.target.value }) }}
                             label="Enter the home address" //use google places split set 
-                        />
+                            list="data"
+                        /> */}
+                        <Select handleHomeAddrChange={this.handleHomeAddrChange} />
                         <TextField
                             required
                             style={{ margin: '10px' }}
