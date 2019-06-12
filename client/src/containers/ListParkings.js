@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import query from '../queries/LocationParkings';
-import { graphql } from 'react-apollo';
 import { Button, ListSubheader } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import { Paper, Typography } from '@material-ui/core';
 
 
 class ListParkings extends Component {
@@ -21,7 +18,7 @@ class ListParkings extends Component {
         this.props.history.push(`/book/${bookId}/${bookDate}/${bookPrice}/${bookAddr}`);
     }
     renderParkings() {
-        return this.props.data.locationParkings.map(({ id, street, slotNo, slots }) => {
+        return this.props.places.map(({ id, street, slotNo, slots }) => {
             const [slot] = slots;
             return (
                 <li key={id} >
@@ -44,12 +41,12 @@ class ListParkings extends Component {
             }}>
                 <GridList cellHeight={180} style={{ width: '500px', height: '450px' }}>
                     <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-                        <ListSubheader component="div">{this.props.data.locationParkings.length ? <h4>List of Available Parkings</h4> : <h4>No Parkings Available! Try for a different City</h4>}</ListSubheader>
+                        <ListSubheader component="div">{this.props.places.length ? <h4>List of Available Parkings</h4> : <h4>No Parkings Available! Try for a different City</h4>}</ListSubheader>
                     </GridListTile>
-                    {this.props.data.locationParkings.map(({ id, street, slotNo, slots }) => {
+                    {this.props.places.map(({ id, street, slotNo, slots }) => {
                         const [slot] = slots;
                         return (
-                            <GridListTile key={id} style={{ marginLeft: '10%' }}>
+                            <GridListTile key={id} style={{ marginLeft: '10%', height: 'unset', width: 'fit-content' }}>
                                 <div>
                                     <h4>{street}</h4>
                                     <p>Date - {slot.slotDate}, Price: ${slot.price}</p>
@@ -64,8 +61,6 @@ class ListParkings extends Component {
     }
 
     render() {
-        if (this.props.data.loading) { return <div>Loading...</div>; }
-
         return (
             <React.Fragment >
                 {this.renderGrid()}
@@ -74,6 +69,4 @@ class ListParkings extends Component {
     }
 }
 
-export default graphql(query, {
-    options: (props) => { return { variables: { city: props.city, state: props.state } } } //props.state
-})(withRouter(ListParkings));
+export default withRouter(ListParkings);
