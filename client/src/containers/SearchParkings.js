@@ -1,27 +1,50 @@
 import React, { Component } from 'react';
-import query from '../queries/LocationParkings';
-import { graphql } from 'react-apollo';
 import { Button, Link, TextField } from '@material-ui/core';
-import ListParkings from './ListParkings';
+import HandleParkings from './HandleParkings';
+
+import Select from '../components/Select';
 
 
 class SearchParking extends Component {
     constructor(props) {
         super(props);
-        this.state = { city: "", state: "", retrieve: false };
+        this.state = { error: "", city: "", state: "", retrieve: false, lat: undefined, lng: undefined };
     }
     getListings = (e) => {
         e.preventDefault();
         this.setState({ retrieve: true })
     }
+    async fetchGeometry(place_id) {
+        return new Promise((resolve, reject) => {
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + place_id + '&fields=name,geometry&key=' + 'AIzaSyDiFYXE3HoT8ux5MqVFaeYLDLQcZvhAqqs';
+            fetch(proxyUrl + url)
+                .then(response => response.json())
+                .then(data => {
+                    resolve(data.result.geometry.location)
+                });
+        })
+    }
+
+    handleHomeAddrChange = async (geometry) => {
+        //console.log(geometry);
+        if (geometry.place_id) {
+            const { place_id, homeAddr } = geometry;
+            const { lat, lng } = await this.fetchGeometry(place_id);
+            this.setState({ lat, lng, error: "" })
+        }
+        else {
+            this.setState({ error: "Invalid Address", retrieve: false })
+        }
+
+    }
 
     render() {
         return (
-            <div style={{ margin: "100px", alignContent: "center" }}>
-                <h4 style={{ textAlign: "centers" }}>Search Available Parkings in a City</h4>
-                <div style={{ display: "flexs", justifyContent: "center" }}>
-                    <form onSubmit={this.getListings.bind(this)}>
-                        <TextField
+            <div>
+                <div >
+                    <form onSubmit={this.getListings.bind(this)} style={{ display: "flex", justifyContent: "center" }}>
+                        {/* <TextField
                             required
                             style={{ margin: '10px' }}
                             id="home-address"
@@ -36,19 +59,21 @@ class SearchParking extends Component {
                             value={this.state.state}
                             onChange={(e) => { this.setState({ state: e.target.value, retrieve: false }) }}
                             label="Enter State"
-                        />
-                        <br />
-                        <Button type="submit" variant="outlined" style={{ margin: '10px', color: "white", backgroundColor: "black" }}>
+                        /> */}
+                        <Select handleHomeAddrChange={this.handleHomeAddrChange} />
+                        <Button type="submit" variant="outlined" style={{ margin: '20px', color: "white", backgroundColor: "black" }}>
                             Search
                         </Button>
                     </form>
                 </div>
-                {this.state.retrieve ? <ListParkings city={this.state.city} state={this.state.state} /> : ""}
-            </div >
+                {this.state.retrieve && !this.state.error ?
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <HandleParkings lng={this.state.lng} lat={this.state.lat} />
+                    </div>
+                    : ""}
+            </div>
         );
     }
 }
 
-export default graphql(query, {
-    options: (props) => { return { variables: { city: "Corvallis", state: "OR" } } } //props.state
-})(SearchParking);
+export default SearchParking;
