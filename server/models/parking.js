@@ -7,6 +7,10 @@ const ParkingSchema = new Schema({
     city: { type: String },
     state: { type: String },
     zip: { type: Number },
+    location: {
+        type: { type: String },
+        coordinates: [Number],
+    },
     slots: [
         {
             slotDate: { type: Date },
@@ -19,6 +23,8 @@ const ParkingSchema = new Schema({
         ref: 'user'
     }
 })
+
+ParkingSchema.index({ "location": "2dsphere" })
 
 ParkingSchema.statics.addSlots = function (id, slots) {
     return this.findById(id)
