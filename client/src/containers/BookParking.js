@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import query from '../queries/UserBookings';
 import mutation from '../mutations/AddBooking';
 import { graphql } from 'react-apollo';
 import { withRouter } from 'react-router-dom';
@@ -21,7 +22,8 @@ class BookParking extends Component {
         // other details 
 
         this.props.mutate({
-            variables: { bookingDate, parkingId }
+            variables: { bookingDate, parkingId },
+            refetchQueries: [{ query }]
         }).then((res) => {
             this.props.history.push('/bookings');
         }).catch((res) => {
