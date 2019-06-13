@@ -5,7 +5,7 @@ const { GraphQLScalarType } = graphql;
 const DateType = new GraphQLScalarType({
     name: 'date',
     serialize: value => {
-        return new Date(value).toLocaleDateString();
+        return new Date(value).toJSON().slice(0, 10)
     },
     parseValue: value => {
 
