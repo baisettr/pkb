@@ -22,6 +22,14 @@ const SlotInput = new GraphQLInputObjectType({
     })
 });
 
+const LocationInput = new GraphQLInputObjectType({
+    name: 'LocationInput',
+    fields: () => ({
+        type: { type: GraphQLString },
+        coordinates: { type: new GraphQLList(GraphQLFloat) }
+    })
+});
+
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
@@ -93,11 +101,12 @@ const mutation = new GraphQLObjectType({
                 zip: { type: GraphQLInt },
                 slots: {
                     type: new GraphQLList(SlotInput)
-                }
+                },
+                location: { type: LocationInput }
             },
-            async resolve(parentValue, { slotNo, street, city, state, zip, slots }, req) {
+            async resolve(parentValue, { slotNo, street, city, state, location, zip, slots }, req) {
                 const userId = req.user._id;
-                const parking = await (new Parking({ slotNo, street, city, state, zip, slots, userId })).save()
+                const parking = await (new Parking({ slotNo, street, city, state, location, zip, slots, userId })).save()
                 const userUpdateParking = await User.updateOne(
                     { _id: userId },
                     { $push: { parkings: parking._id } }

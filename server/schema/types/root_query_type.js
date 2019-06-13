@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLString, GraphQLNonNull } = graphql;
+const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLString, GraphQLNonNull, GraphQLFloat } = graphql;
 
 const Booking = mongoose.model('booking');
 const Parking = mongoose.model('parking');
@@ -54,13 +54,26 @@ const RootQueryType = new GraphQLObjectType({
             },
             async resolve(rootValue, { city, state }) {
                 const parkings = await Parking.find({ city, state, slots: { $elemMatch: { status: true } } });
+                console.log(parkings[0]['slots'][0]);
                 return parkings;
+            }
+        },
+        geoLocationParkings: {
+            type: new GraphQLList(ParkingType),
+            args: {
+                lng: { type: new GraphQLNonNull(GraphQLFloat) },
+                lat: { type: new GraphQLNonNull(GraphQLFloat) },
+            },
+            async resolve(rootValue, { lng, lat }) {
+                let METERS_PER_MILE = 1609.34
+                return Parking.find({ location: { $nearSphere: { $geometry: { type: "Point", coordinates: [lng, lat] }, $maxDistance: 5 * METERS_PER_MILE } }, slots: { $elemMatch: { status: true } } })
             }
         },
         allParkings: {
             type: new GraphQLList(ParkingType),
             resolve(rootValue, args, context) {
-                return Parking.find();
+                let METERS_PER_MILE = 1609.34
+                return Parking.find({ location: { $nearSphere: { $geometry: { type: "Point", coordinates: [-123.2657711, 44.5727998] }, $maxDistance: 5 * METERS_PER_MILE } }, slots: { $elemMatch: { status: true } } })
             }
         }
     })
